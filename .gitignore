@@ -1,8 +1,10 @@
 ﻿/.vs
-/x64
-/metachain
-/MetaChain.o
-/output.log
+x64/*
+*/x64/*
+Debug/*
+*/Debug/*
+Release/*
+*/Release/*
 /dependencies/*
 
 *.tar.gz
