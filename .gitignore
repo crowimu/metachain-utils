@@ -7,9 +7,6 @@ Release/*
 */Release/*
 /dependencies/*
 
-*.tar.gz
-*.exe
-
 # autoreconf
 autom4te.cache/
 build-aux/config.guess
