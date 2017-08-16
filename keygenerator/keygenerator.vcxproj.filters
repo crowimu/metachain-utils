@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Headerdateien\BIP39">
+      <UniqueIdentifier>{4ff3fbc6-842b-4e3b-badd-acb0fbdeb59f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\BIP39">
+      <UniqueIdentifier>{9096c824-8302-4858-9c66-a32c47410a3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="keygenerator.cpp">
@@ -27,6 +33,30 @@
     <ClCompile Include="..\common\utilstrencodings.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="src\BIP39\dictionairy.cpp">
+      <Filter>Quelldateien\BIP39</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BIP39\BIP39.cpp">
+      <Filter>Quelldateien\BIP39</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hash.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sha256.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zeroize.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hmac_sha512.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sha512.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\base16.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ArgsManager.h">
@@ -39,6 +69,36 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\common\tinyformat.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BIP39\BIP39.h">
+      <Filter>Headerdateien\BIP39</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BIP39\dictionairy.h">
+      <Filter>Headerdateien\BIP39</Filter>
+    </ClInclude>
+    <ClInclude Include="src\array_slice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\collection.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hash.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sha256.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zeroize.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hmac_sha512.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sha512.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="src\base16.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
