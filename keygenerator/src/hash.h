@@ -1,11 +1,10 @@
 #pragma once
 
 #include "BIP39\BIP39.h"
-#include "sha256.h"
+#include <mutex>
 
 namespace BIP39
 {
-	hash_digest sha256_hash(data_slice data);
 	long_hash pkcs5_pbkdf2_hmac_sha512(data_slice passphrase, data_slice salt, size_t iterations);
 
 	/* Password-Based Key Derivation Function 2 (PKCS #5 v2.0). */
@@ -17,6 +16,9 @@ namespace BIP39
 
 	inline data_chunk to_chunk(uint8_t byte);
 
+	// Ensure validate_localization is called only once.
+	static std::once_flag icu_mutex;
+	std::string to_normal_nfkd_form(const std::string& value);
 
 	/**
 	* Create a data chunk from an iterable object.

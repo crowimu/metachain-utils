@@ -1,13 +1,12 @@
 #include "BIP39.h"
 #include "../collection.h"
 #include "../hash.h"
-
+#include "../../sha3_test/src/sha3.h"
 #include <cstdint>
 #include "boost/algorithm/string.hpp"
 
 namespace BIP39
 {
-
 	uint8_t Mnemonic::shift(size_t bit)
 	{
 		return (1 << (byte_bits - (bit % byte_bits) - 1));
@@ -37,7 +36,11 @@ namespace BIP39
 		const size_t total_bits = (entropy_bits + check_bits);
 		const size_t word_count = (total_bits / bits_per_word);
 
-		const auto data = build_chunk({ entropy, sha256_hash(entropy) });
+		hash_digest hash;
+		SHA3 crypto;
+		memcpy(hash.data(), crypto.hash(SHA3::HashType::DEFAULT, SHA3::HashSize::SHA3_256, entropy.data(), entropy.size()), 32);
+
+		const auto data = build_chunk({ entropy, hash });
 
 		size_t bit = 0;
 		string_list words;
@@ -110,20 +113,17 @@ namespace BIP39
 	{
 		const auto sentence = boost::join(mnemonic, " ");
 		const std::string salt(passphrase_prefix);
-		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),
-			hmac_iterations);
+		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),	hmac_iterations);
 	}
 
 #ifdef WITH_ICU
 
-	long_hash decode_mnemonic(const word_list& mnemonic,
-		const std::string& passphrase)
+	long_hash decode_mnemonic(const string_list& mnemonic, const std::string& passphrase)
 	{
-		const auto sentence = join(mnemonic);
+		const auto sentence = boost::join(mnemonic, " " );
 		const std::string prefix(passphrase_prefix);
 		const auto salt = to_normal_nfkd_form(prefix + passphrase);
-		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),
-			hmac_iterations);
+		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),	hmac_iterations);
 	}
 
 #endif

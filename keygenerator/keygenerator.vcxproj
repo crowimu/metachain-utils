@@ -76,22 +76,30 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <AdditionalIncludeDirectories>..\dependencies\boost_1_64_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <AdditionalIncludeDirectories>..\dependencies\boost_1_64_0</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -128,13 +136,13 @@
     <ClCompile Include="..\common\ArgsManager.cpp" />
     <ClCompile Include="..\common\logger.cpp" />
     <ClCompile Include="..\common\utilstrencodings.cpp" />
+    <ClCompile Include="..\sha3_test\src\sha3.cpp" />
     <ClCompile Include="keygenerator.cpp" />
     <ClCompile Include="src\base16.cpp" />
     <ClCompile Include="src\BIP39\BIP39.cpp" />
     <ClCompile Include="src\BIP39\dictionairy.cpp" />
     <ClCompile Include="src\hash.cpp" />
     <ClCompile Include="src\hmac_sha512.cpp" />
-    <ClCompile Include="src\sha256.cpp" />
     <ClCompile Include="src\sha512.cpp" />
     <ClCompile Include="src\zeroize.cpp" />
   </ItemGroup>
@@ -143,6 +151,7 @@
     <ClInclude Include="..\common\logger.h" />
     <ClInclude Include="..\common\tinyformat.h" />
     <ClInclude Include="..\common\utilstrencodings.h" />
+    <ClInclude Include="..\sha3_test\src\sha3.h" />
     <ClInclude Include="src\array_slice.h" />
     <ClInclude Include="src\base16.h" />
     <ClInclude Include="src\BIP39\BIP39.h" />
@@ -150,7 +159,6 @@
     <ClInclude Include="src\collection.h" />
     <ClInclude Include="src\hash.h" />
     <ClInclude Include="src\hmac_sha512.h" />
-    <ClInclude Include="src\sha256.h" />
     <ClInclude Include="src\sha512.h" />
     <ClInclude Include="src\zeroize.h" />
   </ItemGroup>

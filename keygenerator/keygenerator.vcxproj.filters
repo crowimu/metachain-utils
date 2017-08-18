@@ -42,9 +42,6 @@
     <ClCompile Include="src\hash.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="src\sha256.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="src\zeroize.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -55,6 +52,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="src\base16.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sha3_test\src\sha3.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,9 +86,6 @@
     <ClInclude Include="src\hash.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="src\sha256.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="src\zeroize.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="src\base16.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\sha3_test\src\sha3.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

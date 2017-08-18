@@ -1,15 +1,13 @@
-#include "hash.h"
+﻿#include "hash.h"
+#include <mutex>
 #include "hmac_sha512.h"
 #include "zeroize.h"
+#include "boost/system/system_error.hpp"
+#include "boost/locale.hpp"
+#include "../../sha3_test/src/sha3.h"
 
 namespace BIP39
 {
-	hash_digest sha256_hash(data_slice data)
-	{
-		hash_digest hash;
-		SHA256_(data.data(), data.size(), hash.data());
-		return hash;
-	}
 
 	long_hash pkcs5_pbkdf2_hmac_sha512(data_slice passphrase, data_slice salt, size_t iterations)
 	{
@@ -82,5 +80,35 @@ namespace BIP39
 	inline data_chunk to_chunk(uint8_t byte)
 	{
 		return data_chunk{ byte };
+	}
+
+	// The backend selection is ignored if invalid (in this case on Windows).
+	static std::string normal_form(const std::string& value, boost::locale::norm_type form)
+	{
+		auto backend = boost::locale::localization_backend_manager::global();
+		backend.select("icu");
+		const boost::locale::generator locale(backend);
+		return normalize(value, form, locale("en_US.UTF8"));
+	}
+
+	// One time verifier of the localization backend manager. This is
+	// necessary because boost::normalize will fail silently to perform
+	// normalization if the ICU dependency is missing.
+	static void validate_localization()
+	{
+		const auto ascii_space = "> <";
+		const auto ideographic_space = ">　<";
+		const auto normal = normal_form(ideographic_space, boost::locale::norm_type::norm_nfkd);
+
+		if (normal != ascii_space)
+			throw std::runtime_error(
+				"Unicode normalization test failed, a dependency may be missing.");
+	}
+
+	// Normalize strings using unicode nfkd normalization.
+	std::string to_normal_nfkd_form(const std::string& value)
+	{
+		std::call_once(icu_mutex, validate_localization);
+		return normal_form(value, boost::locale::norm_type::norm_nfkd);
 	}
 }
