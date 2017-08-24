@@ -102,7 +102,8 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;../dependencies/secp256k1/bin/x64/Debug/v141/static;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>secp256k1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,9 +138,10 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;../dependencies/secp256k1/bin/x64/Release/v141/static</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>secp256k1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -157,6 +159,9 @@
     <ClInclude Include="..\common\logger.h" />
     <ClInclude Include="..\common\tinyformat.h" />
     <ClInclude Include="..\common\utilstrencodings.h" />
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1.h" />
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1_ecdh.h" />
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1_recovery.h" />
     <ClInclude Include="..\sha3_test\src\sha3.h" />
     <ClInclude Include="src\array_slice.h" />
     <ClInclude Include="src\base16.h" />

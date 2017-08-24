@@ -19,6 +19,9 @@
     <Filter Include="Quelldateien\MCP39">
       <UniqueIdentifier>{9096c824-8302-4858-9c66-a32c47410a3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\secp256k1">
+      <UniqueIdentifier>{e1982928-b618-4e86-9a22-1a399e7db552}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="keygenerator.cpp">
@@ -73,6 +76,15 @@
     </ClInclude>
     <ClInclude Include="src\MCP39\MCP39.h">
       <Filter>Headerdateien\MCP39</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1.h">
+      <Filter>Headerdateien\secp256k1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1_ecdh.h">
+      <Filter>Headerdateien\secp256k1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependencies\secp256k1\include\secp256k1_recovery.h">
+      <Filter>Headerdateien\secp256k1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

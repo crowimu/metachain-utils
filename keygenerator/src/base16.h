@@ -109,6 +109,7 @@ namespace MCP39
 
 
 	std::string encode_base16(data_slice data);
+	std::string encode_base16(unsigned char* data, unsigned int uiLength);
 	bool is_base16(const char c);
 
 	/**

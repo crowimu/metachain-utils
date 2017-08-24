@@ -65,6 +65,15 @@ namespace MCP39
 		return ss.str();
 	}
 
+	std::string encode_base16(unsigned char* data, unsigned int uiLength)
+	{
+		std::stringstream ss;
+		ss << std::hex << std::setfill('0');
+		for (int i = 0; i < uiLength; i++)
+			ss << std::setw(2) << (int)data[i];
+		return ss.str();
+	}
+
 	bool decode_base16(data_chunk& out, const std::string& in)
 	{
 		// This prevents a last odd character from being ignored:

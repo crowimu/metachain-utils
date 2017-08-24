@@ -5,13 +5,14 @@
 **********************************************************************/
 
 
+#include <sstream>
 #include "../common/ArgsManager.h"
 #include "../common/logger.h"
 #include "src/MCP39/MCP39.h"
 #include "src/MCP39/dictionairy.h"
 #include "boost/algorithm/string.hpp"
 #include "src/base16.h"
-#include <sstream>
+#include "../dependencies/secp256k1/include/secp256k1.h"
 
 #ifdef _WIN32
 	#include <SDKDDKVer.h>
@@ -114,8 +115,22 @@ int main(int argc, char* argv[])
 
 	LOGS( "Mnemonic: " + boost::join(words, " ") );
 	LOGS("Is Mnemonic valid: " + std::to_string(mnem.isValid(words, *dictionary)));
-	LOGS("Decode: " + MCP39::encode_base16(mnem.decode(words, strPassphrase)));
+	std::string strPrivKey = MCP39::encode_base16(mnem.decode(words, strPassphrase));
+	LOGS("Private key: " + strPrivKey);
 
+	// SECP256k1 ECDSA
+	secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+	if (secp256k1_ec_seckey_verify(ctx, (unsigned char*)strPrivKey.c_str()) == 1)
+	{
+		LOG("The private key is valid", "SECP256k1");
+
+		// public key
+		secp256k1_pubkey pubkey;
+		memset(&pubkey, 0x00, sizeof(secp256k1_pubkey));
+		secp256k1_ec_pubkey_create(ctx, &pubkey, (unsigned char*)strPrivKey.c_str());
+		std::string strPubKey = MCP39::encode_base16(pubkey.data, sizeof(pubkey.data) / sizeof(pubkey.data[0]));
+		LOG("The public key is: " + strPubKey, "SECP256K1");
+	}
 	getchar();
 	return 1;
 }
