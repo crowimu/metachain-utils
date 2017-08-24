@@ -125,11 +125,15 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
+      <AdditionalIncludeDirectories>..\dependencies\boost_1_64_0</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -139,12 +143,8 @@
     <ClCompile Include="..\sha3_test\src\sha3.cpp" />
     <ClCompile Include="keygenerator.cpp" />
     <ClCompile Include="src\base16.cpp" />
-    <ClCompile Include="src\BIP39\BIP39.cpp" />
-    <ClCompile Include="src\BIP39\dictionairy.cpp" />
-    <ClCompile Include="src\hash.cpp" />
-    <ClCompile Include="src\hmac_sha512.cpp" />
-    <ClCompile Include="src\sha512.cpp" />
-    <ClCompile Include="src\zeroize.cpp" />
+    <ClCompile Include="src\MCP39\dictionairy.cpp" />
+    <ClCompile Include="src\MCP39\MCP39.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ArgsManager.h" />
@@ -154,13 +154,8 @@
     <ClInclude Include="..\sha3_test\src\sha3.h" />
     <ClInclude Include="src\array_slice.h" />
     <ClInclude Include="src\base16.h" />
-    <ClInclude Include="src\BIP39\BIP39.h" />
-    <ClInclude Include="src\BIP39\dictionairy.h" />
-    <ClInclude Include="src\collection.h" />
-    <ClInclude Include="src\hash.h" />
-    <ClInclude Include="src\hmac_sha512.h" />
-    <ClInclude Include="src\sha512.h" />
-    <ClInclude Include="src\zeroize.h" />
+    <ClInclude Include="src\MCP39\dictionairy.h" />
+    <ClInclude Include="src\MCP39\MCP39.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

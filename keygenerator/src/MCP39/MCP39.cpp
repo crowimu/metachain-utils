@@ -1,11 +1,12 @@
-#include "BIP39.h"
-#include "../collection.h"
-#include "../hash.h"
-#include "../../sha3_test/src/sha3.h"
+﻿#include "MCP39.h"
 #include <cstdint>
+#include <mutex>
+#include <iterator>
+#include "../../sha3_test/src/sha3.h"
 #include "boost/algorithm/string.hpp"
+#include "boost/system/system_error.hpp"
 
-namespace BIP39
+namespace MCP39
 {
 	uint8_t Mnemonic::shift(size_t bit)
 	{
@@ -80,9 +81,12 @@ namespace BIP39
 
 		for (const auto& word : words)
 		{
-			const auto position = find_position(lexicon, word);
-			if (position == -1)
+			auto itPos = std::find(lexicon.begin(), lexicon.end(), word);
+
+			if (itPos == lexicon.end())
 				return false;
+
+			int position = std::distance(lexicon.begin(), itPos);
 
 			for (size_t loop = 0; loop < bits_per_word; loop++, bit++)
 			{
@@ -109,22 +113,47 @@ namespace BIP39
 		return false;
 	}
 
-	long_hash Mnemonic::decode(const string_list& mnemonic)
+	long_hash Mnemonic::decode(const string_list& mnemonic, const std::string& passphrase)
 	{
-		const auto sentence = boost::join(mnemonic, " ");
-		const std::string salt(passphrase_prefix);
-		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),	hmac_iterations);
+		std::string strSentence = boost::join(mnemonic, " " );
+		std::string salt = toNormalForm(passphrase);
+
+		SHA3 crypto;
+		uint8_t* tmp = crypto.kmac(SHA3::HashSize::SHA3_256, (uint8_t*)strSentence.c_str(), strSentence.length(), SHA3::HashSize::SHA3_256 * 2, salt, MNEMONIC_DECODE_PREFIX);
+		
+		long_hash hashRet;
+		memset(&hashRet, 0x00, sizeof(long_hash));
+		memcpy(&hashRet, tmp, sizeof(long_hash));
+
+		return hashRet;
 	}
 
-#ifdef WITH_ICU
-
-	long_hash decode_mnemonic(const string_list& mnemonic, const std::string& passphrase)
+	// The backend selection is ignored if invalid (in this case on Windows).
+	std::string Mnemonic::normal_form(const std::string& value, boost::locale::norm_type form)
 	{
-		const auto sentence = boost::join(mnemonic, " " );
-		const std::string prefix(passphrase_prefix);
-		const auto salt = to_normal_nfkd_form(prefix + passphrase);
-		return pkcs5_pbkdf2_hmac_sha512(to_chunk(sentence), to_chunk(salt),	hmac_iterations);
+		auto backend = boost::locale::localization_backend_manager::global();
+		backend.select("icu");
+		const boost::locale::generator locale(backend);
+		return normalize(value, form, locale("en_US.UTF8"));
 	}
 
-#endif
+	// One time verifier of the localization backend manager. This is
+	// necessary because boost::normalize will fail silently to perform
+	// normalization if the ICU dependency is missing.
+	void Mnemonic::validate_localization()
+	{
+		const auto ascii_space = "> <";
+		const auto ideographic_space = ">　<";
+		const auto normal = normal_form(ideographic_space, boost::locale::norm_type::norm_nfkd);
+
+		if (normal != ascii_space)
+			throw std::runtime_error(
+				"Unicode normalization test failed, a dependency may be missing.");
+	}
+
+	std::string Mnemonic::toNormalForm(std::string value)
+	{
+		std::call_once(m_onceMutex, &Mnemonic::validate_localization, this);
+		return normal_form(value, boost::locale::norm_type::norm_nfkd);
+	}
 }

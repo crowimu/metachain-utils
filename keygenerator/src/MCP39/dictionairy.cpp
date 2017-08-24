@@ -1,7 +1,7 @@
 ﻿
 #include "dictionairy.h"
 
-namespace BIP39 {
+namespace MCP39 {
 	namespace language {
 
 		const dictionary en =
