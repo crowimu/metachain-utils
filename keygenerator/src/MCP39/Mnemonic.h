@@ -26,8 +26,8 @@
 
 // originally BIP39 but due to heavy changes in the underlying structure of SHA3, this is MCP39 now
 
-#ifndef __MCP39_H__
-#define __MCP39_H__
+#ifndef __MCP39_MNEMONIC_H__
+#define __MCP39_MNEMONIC_H__
 
 #include <cstdint>
 #include <mutex>
@@ -38,12 +38,16 @@
 // standard prefix for decoding mnemonic
 #define MNEMONIC_DECODE_PREFIX "mnemonicMCP39"
 
+typedef array_slice<uint8_t> data_slice;
+typedef std::vector<uint8_t> data_chunk;
+typedef std::initializer_list<data_slice> loaf;
+
+template <size_t Size>
+using byte_array = std::array<uint8_t, Size>;
+
 namespace MCP39
 {
 	typedef std::vector<std::string> string_list;
-	typedef array_slice<uint8_t> data_slice;
-	typedef std::vector<uint8_t> data_chunk;
-	typedef std::initializer_list<data_slice> loaf;
 
 	const size_t hash_size = 32;
 	const size_t half_hash_size = hash_size / 2;
@@ -52,8 +56,6 @@ namespace MCP39
 	const size_t short_hash_size = 20;
 	const size_t mini_hash_size = 6;
 
-	template <size_t Size>
-	using byte_array = std::array<uint8_t, Size>;
 
 	typedef byte_array<hash_size> hash_digest;
 	typedef byte_array<half_hash_size> half_hash;
