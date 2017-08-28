@@ -36,10 +36,9 @@ The following process is suitable for checking the integrity and validity of a w
 * Check if `MC-` exists
 * Extract the ChainIdentifier and get the corresponding ChainIdentifier ID
 * Extract the Version Byte `V`
-* [V=1]
-** Extract the Checksum `C`
-** Extract the flag byte `F`
-** Calculate the Checksum for `X` and compare the first 4 bytes with `C`
+* [V=1] Extract the Checksum `C`
+* [V=1] Extract the flag byte `F`
+* [V=1] Calculate the Checksum for `X` and compare the first 4 bytes with `C`
 
 License
 ----
