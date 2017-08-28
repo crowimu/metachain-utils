@@ -8,11 +8,11 @@
 #include <sstream>
 #include "../common/ArgsManager.h"
 #include "../common/logger.h"
-#include "src/MCP39/MCP39.h"
+#include "src/MCP39/Mnemonic.h"
 #include "src/MCP39/dictionairy.h"
+#include "src/MCP01/Account.h"
 #include "boost/algorithm/string.hpp"
 #include "src/base16.h"
-#include "../dependencies/secp256k1/include/secp256k1.h"
 
 #ifdef _WIN32
 	#include <SDKDDKVer.h>
@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 		LOGS("-l=<language>: select a language from the dictionary. possible variants are en, es, ja, it, fr, cs, ru, uk, zh_Hans, zh_Hant; defaults to en");
 		LOGS("-s=<seed>: a seed to build the mnemonic, in hex format, multiple of 8");
 		LOGS("-p=<passphrase>: using this passphrase to decode the mnemonic. Can be empty");
+		LOGS("-c=<chain name>: chain name to create the key for. possible variants are TCT, MINE; defaults to TCT" );
 		getchar();
 		return 1;
 	}
@@ -92,8 +93,8 @@ int main(int argc, char* argv[])
 	// SEED functions
 	const std::string strSeed = GetArg("-s", getRandomSeed(64) );
 	LOGS("Using Seed: " + strSeed);
-	MCP39::base16 b16Seed(strSeed);
-	MCP39::data_chunk entropy(b16Seed);	
+	base16 b16Seed(strSeed);
+	data_chunk entropy(b16Seed);	
 	const auto entropy_size = entropy.size();
 
 	if ((entropy_size % MCP39::mnemonic_seed_multiple) != 0)
@@ -115,22 +116,29 @@ int main(int argc, char* argv[])
 
 	LOGS( "Mnemonic: " + boost::join(words, " ") );
 	LOGS("Is Mnemonic valid: " + std::to_string(mnem.isValid(words, *dictionary)));
-	std::string strPrivKey = MCP39::encode_base16(mnem.decode(words, strPassphrase));
-	LOGS("Private key: " + strPrivKey);
 
-	// SECP256k1 ECDSA
-	secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
-	if (secp256k1_ec_seckey_verify(ctx, (unsigned char*)strPrivKey.c_str()) == 1)
+	// Private Key
+	MCP01::Account acc(mnem.decode(words, strPassphrase));
+	LOGS("Private key: " + acc.getPrivKeyStr() );
+
+	// Public Key
+	if (!acc.calcPubKey(MCP01::Account::ECDSA::SECP256k1))
 	{
-		LOG("The private key is valid", "SECP256k1");
-
-		// public key
-		secp256k1_pubkey pubkey;
-		memset(&pubkey, 0x00, sizeof(secp256k1_pubkey));
-		secp256k1_ec_pubkey_create(ctx, &pubkey, (unsigned char*)strPrivKey.c_str());
-		std::string strPubKey = MCP39::encode_base16(pubkey.data, sizeof(pubkey.data) / sizeof(pubkey.data[0]));
-		LOG("The public key is: " + strPubKey, "SECP256K1");
+		LOG_ERROR("Problem calculating public key", "SECP256k1");
+		getchar();
+		return 1;
 	}
+	LOG("The public key is: " + acc.getPubKeyStr(), "SECP256K1");
+
+	// Wallet Address
+	LOGS("The wallet address is (Mainnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "TCT")));
+	LOGS("The wallet address is (Testnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "TCT"), true));
+
+	// Verifying Address
+	LOGS("=============================");
+	LOGS("Verifying Mainnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "TCT")))));
+	LOGS("Verifying Testnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "TCT"), true))));
+	
 	getchar();
 	return 1;
 }

@@ -76,6 +76,9 @@
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ExecutablePath>C:\Office\metachain-utils\dependencies\cryptopp;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -100,10 +103,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;../dependencies/secp256k1/bin/x64/Debug/v141/static;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>secp256k1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;../dependencies/secp256k1/bin/x64/Debug/v141/static;C:\Office\metachain-utils\dependencies\cryptopp\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>secp256k1.lib;cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,8 +155,10 @@
     <ClCompile Include="..\sha3_test\src\sha3.cpp" />
     <ClCompile Include="keygenerator.cpp" />
     <ClCompile Include="src\base16.cpp" />
+    <ClCompile Include="src\MCP01\Account.cpp" />
+    <ClCompile Include="src\MCP01\base58.cpp" />
     <ClCompile Include="src\MCP39\dictionairy.cpp" />
-    <ClCompile Include="src\MCP39\MCP39.cpp" />
+    <ClCompile Include="src\MCP39\Mnemonic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ArgsManager.h" />
@@ -165,8 +171,10 @@
     <ClInclude Include="..\sha3_test\src\sha3.h" />
     <ClInclude Include="src\array_slice.h" />
     <ClInclude Include="src\base16.h" />
+    <ClInclude Include="src\MCP01\Account.h" />
+    <ClInclude Include="src\MCP01\base58.h" />
     <ClInclude Include="src\MCP39\dictionairy.h" />
-    <ClInclude Include="src\MCP39\MCP39.h" />
+    <ClInclude Include="src\MCP39\Mnemonic.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
