@@ -40,6 +40,8 @@ The following process is suitable for checking the integrity and validity of a w
 * [V=1] Extract the flag byte `F`
 * [V=1] Calculate the Checksum for `X` and compare the first 4 bytes with `C`
 
+Please look in the [forum] for a closer description and documentation.
+
 License
 ----
 
@@ -49,3 +51,4 @@ GPLv3
 **(c) the TCT-Devs**
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+[forum]: <https://forum.trustchaintechnologies.io/showthread.php?tid=22>
