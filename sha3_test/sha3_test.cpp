@@ -53,6 +53,41 @@ void __inline TestHash(SHA3::HashType HashType, SHA3::HashSize HashSize, char *p
 	LOG("Result: " + strResult, strFacility);
 };
 
+// small inline function for easier processing of the tested output for files
+void __inline TestFileHash(SHA3::HashType HashType, SHA3::HashSize HashSize, std::string strFileName, unsigned int uiDigestLength = 0)
+{
+	SHA3 crypto;
+	std::chrono::high_resolution_clock::time_point t1, t2;
+	std::string strResult, strFacility = "";
+
+	t1 = std::chrono::high_resolution_clock::now();
+	strResult = crypto.to_string(crypto.hashFile(strFileName, HashType, HashSize, uiDigestLength), HashSize);
+	t2 = std::chrono::high_resolution_clock::now();
+
+	switch (HashType)
+	{
+	case SHA3::HashType::DEFAULT:
+		strFacility = "SHA3";
+		break;
+	case SHA3::HashType::KECCAK:
+		strFacility = "KECCAK";
+		break;
+	case SHA3::HashType::SHAKE:
+		strFacility = "SHAKE";
+		break;
+	}
+
+	strFacility += "-" + std::to_string(HashSize) + " (" + std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count());
+
+#ifdef _WIN32
+	strFacility += " \xE6s)";
+#else
+	strFacility += " \xC2\xB5s)";
+#endif
+
+	LOG("Result: " + strResult, strFacility);
+};
+
 // argument manager
 ArgsManager gArgs;
 
@@ -76,8 +111,9 @@ int main(int argc, char* argv[])
 		LOGS("            -n=<string>: name string, may be empty");
 		LOGS("--test-kmac: test kmac implementation. requirements:");
 		LOGS("            -x=<string>: message to be hashed, randomly created when empty");
-		LOGS("            -k=<string> key to encrypt the message, may be empty");
+		LOGS("            -k=<string>: key to encrypt the message, may be empty");
 		LOGS("--test: test different parameters and check the SHA3 algorithm");
+		LOGS("--test-file=<string>: use the given file and calculate different checksums for it");
 		getchar();
 		return 1;
 	}
@@ -267,7 +303,15 @@ int main(int argc, char* argv[])
 			delete pcBuffer;
 		}
 	}
-	
+	else if (IsArgSet("--test-file"))
+	{
+		std::string strFileName = GetArg("--test-file", "input.zip");
+		LOG("Testing file " + strFileName, "HashSize [bit]: 512");
+		TestFileHash(SHA3::HashType::DEFAULT, SHA3::HashSize::SHA3_512, strFileName);
+		TestFileHash(SHA3::HashType::KECCAK, SHA3::HashSize::SHA3_512, strFileName);
+		TestFileHash(SHA3::HashType::SHAKE, SHA3::HashSize::SHA3_512, strFileName, 512);
+	}
+
 	getchar();
 	return 1;
 }

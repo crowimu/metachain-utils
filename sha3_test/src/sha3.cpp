@@ -9,6 +9,8 @@
 #include <boost/lexical_cast.hpp>
 #include "endian.h"
 
+const unsigned int cuiBufferSize = 1024 * 4;
+
 static inline uint64_t rotateLeft(uint64_t x, unsigned int n)
 {
 	const unsigned int mask = (8 * sizeof(x) - 1);  // assumes width is a power of 2.
@@ -47,6 +49,47 @@ std::string	SHA3::to_string(uint8_t *input, unsigned int uiSize)
 		ss << std::setw(2) << static_cast<unsigned>(input[i]);
 
 	return ss.str();
+}
+
+uint8_t* SHA3::hashFile(std::string strFileName, HashType type, HashSize size, unsigned int uiDigestLength)
+{
+	if (type == SHA3::HashType::SHAKE)
+		shakeCreate(size, uiDigestLength);
+	else
+		keccakCreate(size);
+
+	FILE *fp = fopen(strFileName.c_str(), "rb");
+	if (!fp)
+		return NULL;
+
+	fseek(fp, 0, SEEK_SET);
+	char *cBuffer = new char[cuiBufferSize];
+	while (true)
+	{
+		unsigned int bytesRead = fread(cBuffer, 1, cuiBufferSize, fp);
+
+		keccakUpdate( (uint8_t*)cBuffer, 0, bytesRead );
+		if (bytesRead < cuiBufferSize)
+			break;
+	}
+	delete[] cBuffer;
+	fclose(fp);
+
+	uint8_t *op;
+	switch (type)
+	{
+	case SHA3::HashType::DEFAULT:
+		op = sha3Digest();
+		break;
+	case SHA3::HashType::KECCAK:
+		op = keccakDigest();
+		break;
+	case SHA3::HashType::SHAKE:
+		op = shakeDigest();
+		break;
+	}
+
+	return op;
 }
 
 uint8_t* SHA3::hash(HashType type, HashSize size, const uint8_t * pBuffer, unsigned int uiLength, unsigned int uiDigestLength )
