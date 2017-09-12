@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 		LOGS("-l=<language>: select a language from the dictionary. possible variants are en, es, ja, it, fr, cs, ru, uk, zh_Hans, zh_Hant; defaults to en");
 		LOGS("-s=<seed>: a seed to build the mnemonic, in hex format, multiple of 8");
 		LOGS("-p=<passphrase>: using this passphrase to decode the mnemonic. Can be empty");
-		LOGS("-c=<chain name>: chain name to create the key for. possible variants are TCT, MINE; defaults to TCT" );
+		LOGS("-c=<chain name>: chain name to create the key for. possible variants are MC, TCT, MINE; defaults to MC" );
 		getchar();
 		return 1;
 	}
@@ -131,13 +131,13 @@ int main(int argc, char* argv[])
 	LOG("The public key is: " + acc.getPubKeyStr(), "SECP256K1");
 
 	// Wallet Address
-	LOGS("The wallet address is (Mainnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "TCT")));
-	LOGS("The wallet address is (Testnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "TCT"), true));
+	LOGS("The wallet address is (Mainnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "MC")));
+	LOGS("The wallet address is (Testnet | SECP256k1): " + acc.getWalletAddress(GetArg("-c", "MC"), true));
 
 	// Verifying Address
 	LOGS("=============================");
-	LOGS("Verifying Mainnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "TCT")))));
-	LOGS("Verifying Testnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "TCT"), true))));
+	LOGS("Verifying Mainnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "MC")))));
+	LOGS("Verifying Testnet SECP256k1 address: " + std::to_string(acc.verifyWalletAddress(acc.getWalletAddress(GetArg("-c", "MC"), true))));
 	
 	getchar();
 	return 1;

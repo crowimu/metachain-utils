@@ -143,7 +143,9 @@ namespace MCP01
 		// get the ChainIdentifier 2byte from string
 		// todo: hardcoded in keygenerator, use metadb in metachain for lookup
 		uint16_t uiChainIdentifier = 0;
-		if (strChainIdentifier == "TCT")
+		if (strChainIdentifier == "MC")
+			uiChainIdentifier = 0;
+		else if (strChainIdentifier == "TCT")
 			uiChainIdentifier = 1;
 		else if (strChainIdentifier == "MINE")
 			uiChainIdentifier = 2;
@@ -209,7 +211,9 @@ namespace MCP01
 		// calculating the chain identifier uid
 		// todo: hardcoded in keygenerator, use metadb in metachain for lookup
 		uint16_t uiChainIdentifier = 0;
-		if (strChainIdentifier == "TCT")
+		if (strChainIdentifier == "MC")
+			uiChainIdentifier = 0;
+		else if (strChainIdentifier == "TCT")
 			uiChainIdentifier = 1;
 		else if (strChainIdentifier == "MINE")
 			uiChainIdentifier = 2;
