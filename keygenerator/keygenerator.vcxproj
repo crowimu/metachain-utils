@@ -102,8 +102,10 @@
       <AdditionalIncludeDirectories>..\dependencies\boost_1_64_0</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../dependencies\boost_1_64_0\stage\lib;../dependencies/secp256k1/bin/x64/Debug/v141/static;C:\Office\metachain-utils\dependencies\cryptopp\x64\Output\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -138,6 +140,9 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>..\dependencies\boost_1_64_0</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>_UTILS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

@@ -14,8 +14,13 @@
 
 namespace MCP01
 {
-	Account::Account(uint8_t *keyPriv)
+	Account::Account()
 		:m_ecdsaPubKey(ECDSA::not_calculated)
+	{
+	}
+
+	Account::Account(uint8_t *keyPriv)
+		: m_ecdsaPubKey(ECDSA::not_calculated)
 	{
 		// sanitize
 		memset(m_keyPriv, 0x00, 64 * sizeof(uint8_t));
@@ -71,7 +76,7 @@ namespace MCP01
 			else
 				return false;
 		}
-		else if( type == ECDSA::SECP256r1 )
+		else if (type == ECDSA::SECP256r1)
 		{
 			// SECP256r1 not implemented yet
 			m_ecdsaPubKey = ECDSA::not_calculated;
@@ -119,10 +124,10 @@ namespace MCP01
 		uint8_t* X = crypto.hash(SHA3::HashType::DEFAULT, SHA3::HashSize::SHA3_512, buffer, 65);
 
 		// assemble byte flag
-		uint8_t byteFlag = bTestNet ? 0x10 : 0x00; // fifth bit indicates testnet
-		byteFlag |= m_ecdsaPubKey == ECDSA::SECP256k1 ? 0x01 : 0x00; // first bit indicates ECDSA algorithm. 1=k1, 0=r1. may be changed in future versions to use more bit
+		uint8_t byteFlag = bTestNet ? BITFIELD_TESTNET : 0x00; // fifth bit indicates testnet
+		byteFlag |= m_ecdsaPubKey == ECDSA::SECP256k1 ? BITFIELD_ECDSA_k1 : BITFIELD_ECDSA_r1; // first bit indicates ECDSA algorithm. 1=k1, 0=r1. may be changed in future versions to use more bit
 
-		// calc hashsum
+																							   // calc hashsum
 		buffer[0] = byteFlag;
 		memcpy(buffer + 1, X, 64);
 		buffer[65] = WALLET_ADDRESS_VERSION;
@@ -138,10 +143,11 @@ namespace MCP01
 		return true;
 	}
 
-	std::string Account::getWalletAddress( std::string strChainIdentifier, bool bTestNet )
+	std::string Account::getWalletAddress(std::string strChainIdentifier, bool bTestNet)
 	{
 		// get the ChainIdentifier 2byte from string
-		// todo: hardcoded in keygenerator, use metadb in metachain for lookup
+#ifdef _UTILS
+		// hardcoded in metachain-utils/keygenerator
 		uint16_t uiChainIdentifier = 0;
 		if (strChainIdentifier == "MC")
 			uiChainIdentifier = 0;
@@ -151,6 +157,9 @@ namespace MCP01
 			uiChainIdentifier = 2;
 		else
 			return "";
+#else
+		uint16_t uiChainIdentifier = MetaChain::getInstance().getStorageManager()->getChainIdentifier(strChainIdentifier);
+#endif
 
 		// calculate the wallet address
 		uint8_t uiAddress[70];
@@ -159,7 +168,7 @@ namespace MCP01
 
 		// base58 encode for better viewing
 		std::string strWallet = base58::encode(uiAddress, 70);
-		
+
 		// return nicely formatted
 		return WALLET_ADDRESS_STD_PREFIX + (std::string)"-" + strChainIdentifier + "-" + tokenize(strWallet);
 	}
@@ -169,12 +178,12 @@ namespace MCP01
 		std::string strRet = strWalletAddress;
 
 		static const int sciSpace = 16;
-		for (auto it = strRet.begin(); std::distance(it, strRet.end()) >= sciSpace+1; ++it)
+		for (auto it = strRet.begin(); std::distance(it, strRet.end()) >= sciSpace + 1; ++it)
 		{
 			std::advance(it, sciSpace);
 			it = strRet.insert(it, '-');
 		}
-		
+
 		return strRet;
 	}
 
@@ -202,41 +211,45 @@ namespace MCP01
 			return false;
 
 		// 1
-		if (!boost::istarts_with(strWalletAddress, WALLET_ADDRESS_STD_PREFIX+(std::string)"-"))
+		if (!boost::istarts_with(strWalletAddress, WALLET_ADDRESS_STD_PREFIX + (std::string)"-"))
 			return false;
 		strTmp = strWalletAddress.substr(3);
 
 		// 2
-		std::string strChainIdentifier = strTmp.substr(0, strTmp.find("-"));
 		// calculating the chain identifier uid
-		// todo: hardcoded in keygenerator, use metadb in metachain for lookup
-		uint16_t uiChainIdentifier = 0;
+		std::string strChainIdentifier = strTmp.substr(0, strTmp.find("-"));
+#ifdef _UTILS
+		// hardcoded in metachain-utils/keygenerator		
 		if (strChainIdentifier == "MC")
-			uiChainIdentifier = 0;
+			m_uint16ChainIdentifier = 0;
 		else if (strChainIdentifier == "TCT")
-			uiChainIdentifier = 1;
+			m_uint16ChainIdentifier = 1;
 		else if (strChainIdentifier == "MINE")
-			uiChainIdentifier = 2;
+			m_uint16ChainIdentifier = 2;
 		else
 			return false;
+#else
+		m_uint16ChainIdentifier = MetaChain::getInstance().getStorageManager()->getChainIdentifier(strChainIdentifier);
+#endif
+
 		strTmp = strTmp.substr(strChainIdentifier.length() + 1);
 
 		// 3
 		uint8_t uiAddress[70];
 		if (!base58::decode(untokenize(strTmp), uiAddress))
 			return false;
-		uint8_t uiVersionNumber = uiAddress[69];
+		m_uint8VersionNumber = uiAddress[69];
 
 		// 4
 		uint8_t uiChecksum[4];
 		memcpy(uiChecksum, uiAddress, 4);
 
 		// 5
-		uint8_t uiFlags = uiAddress[4];
+		m_uiFlags = uiAddress[4];
 
 		// 6
 		SHA3 crypto;
-		uint8_t* C = crypto.hash(SHA3::HashType::KECCAK, SHA3::HashSize::SHA3_128, crypto.hash(SHA3::HashType::KECCAK, SHA3::HashSize::SHA3_128, (uiAddress+4), 66), 32);
+		uint8_t* C = crypto.hash(SHA3::HashType::KECCAK, SHA3::HashSize::SHA3_128, crypto.hash(SHA3::HashType::KECCAK, SHA3::HashSize::SHA3_128, (uiAddress + 4), 66), 32);
 		if (memcmp(uiChecksum, C, 4) != 0)
 		{
 			delete C;
