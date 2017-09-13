@@ -16,6 +16,9 @@
 	#ifdef _MSC_VER
 		#include <basetsd.h>
 	#endif
+#else
+	#include <fcntl.h>
+	#include <unistd.h>
 #endif
 
 // small inline function for easier processing of the tested output
